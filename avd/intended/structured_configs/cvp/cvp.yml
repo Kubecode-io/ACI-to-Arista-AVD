@@ -1,0 +1,31 @@
+---
+cvp_devices:
+  - fqdn: LON-LAB-ARISTA-BL01
+    parentContainerName: DC1_L3_LEAVES
+    configlets:
+      - AVD-FABRIC-_LON-LAB-ARISTA-BL01
+  - fqdn: LON-LAB-ARISTA-LF01
+    parentContainerName: DC1_L3_LEAVES
+    configlets:
+      - AVD-FABRIC-_LON-LAB-ARISTA-LF01
+  - fqdn: LON-LAB-ARISTA-LF02
+    parentContainerName: DC1_L3_LEAVES
+    configlets:
+      - AVD-FABRIC-_LON-LAB-ARISTA-LF02
+  - fqdn: LON-LAB-ARISTA-SPN01
+    parentContainerName: DC1_SPINES
+    configlets:
+      - AVD-FABRIC-_LON-LAB-ARISTA-SPN01
+  - fqdn: LON-LAB-ARISTA-SPN02
+    parentContainerName: DC1_SPINES
+    configlets:
+      - AVD-FABRIC-_LON-LAB-ARISTA-SPN02
+cvp_containers:
+  DC1:
+    parentContainerName: FABRIC
+  DC1_L3_LEAVES:
+    parentContainerName: DC1
+  DC1_SPINES:
+    parentContainerName: DC1
+  FABRIC:
+    parentContainerName: Tenant

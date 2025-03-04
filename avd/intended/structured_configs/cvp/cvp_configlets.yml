@@ -1,0 +1,279 @@
+cvp_configlets:
+  AVD-FABRIC-_LON-LAB-ARISTA-BL01: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n
+    \  exec /usr/bin/TerminAttr -cvaddr=192.168.0.1:9910 -cvauth=token,/tmp/token
+    -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata
+    -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs\n   no shutdown\n!\nvlan
+    internal order ascending range 1006 1199\n!\ntransceiver qsfp default-mode 4x10G\n!\nservice
+    routing protocols model multi-agent\n!\nhostname LON-LAB-ARISTA-BL01\nip name-server
+    vrf MGMT 192.168.104.51\n!\nntp server vrf MGMT 0.pool.ntp.org prefer\n!\nspanning-tree
+    mode mstp\nspanning-tree mst 0 priority 4096\n!\nno enable password\nno aaa root\n!\nusername
+    ansible privilege 15 role network-admin secret sha512 $6$Sd/trh9um4T4h12V$5/nfigRGrajt0OvpsFRdPOMjRwMzugl8h/2QQ1H1lg706mVn4l0R1isfNv6KOmRr8C2OWHZD6sye8tIVoH7351\nusername
+    cvpadmin privilege 15 role network-admin secret sha512 $6$LITZBnm3CzatQIQ6$7Xn1QW54GMoonsSba6w9MtaKP3KVgR3qE3HtArQk89P.ZuIV7fgkqxWHHGVjcluudqWpIroH1b17EQRPchVaS1\n!\nvlan
+    123\n   name Prod-VLAN-123\n!\nvrf instance MGMT\n!\nvrf instance prod\n!\ninterface
+    Ethernet48\n   description host2_eth0\n   no shutdown\n   switchport access vlan
+    11\n   switchport mode access\n   switchport\n!\ninterface Ethernet49/1\n   description
+    P2P_LINK_TO_LON-LAB-ARISTA-SPN01_Ethernet9/1\n   no shutdown\n   mtu 1500\n   no
+    switchport\n   ip address 10.255.255.9/31\n!\ninterface Ethernet50/1\n   description
+    P2P_LINK_TO_LON-LAB-ARISTA-SPN02_Ethernet9/1\n   no shutdown\n   mtu 1500\n   no
+    switchport\n   ip address 10.255.255.11/31\n!\ninterface Loopback0\n   description
+    EVPN_Overlay_Peering\n   no shutdown\n   ip address 10.255.0.5/32\n!\ninterface
+    Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address
+    10.255.1.5/32\n!\ninterface Loopback10\n   description prod_VTEP_DIAGNOSTICS\n
+    \  no shutdown\n   vrf prod\n   ip address 10.255.10.5/32\n!\ninterface Management1\n
+    \  description oob_management\n   no shutdown\n   vrf MGMT\n   ip address 192.168.104.163/24\n!\ninterface
+    Vlan123\n   description Prod-VLAN-123\n   no shutdown\n   vrf prod\n   ip address
+    virtual 192.168.3.250/23\n!\ninterface Vxlan1\n   description LON-LAB-ARISTA-BL01_VTEP\n
+    \  vxlan source-interface Loopback1\n   vxlan udp-port 4789\n   vxlan vlan 123
+    vni 10123\n   vxlan vrf prod vni 10\n!\nip virtual-router mac-address 00:1c:73:00:00:99\n!\nip
+    address virtual source-nat vrf prod address 10.255.10.5\n!\nip routing\nno ip
+    routing vrf MGMT\nip routing vrf prod\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n
+    \  seq 10 permit 10.255.0.0/27 eq 32\n   seq 20 permit 10.255.1.0/27 eq 32\n!\nip
+    route vrf MGMT 0.0.0.0/0 192.168.104.254\n!\nroute-map RM-CONN-2-BGP permit 10\n
+    \  match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nrouter bfd\n   multihop
+    interval 300 min-rx 300 multiplier 3\n!\nrouter bgp 65101\n   router-id 10.255.0.5\n
+    \  maximum-paths 4 ecmp 4\n   no bgp default ipv4-unicast\n   neighbor EVPN-OVERLAY-PEERS
+    peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n   neighbor
+    EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS allowas-in 1\n   neighbor
+    EVPN-OVERLAY-PEERS ebgp-multihop 3\n   neighbor EVPN-OVERLAY-PEERS password 7
+    Q4fqtbqcZ7oQuKfuWtNGRQ==\n   neighbor EVPN-OVERLAY-PEERS send-community\n   neighbor
+    EVPN-OVERLAY-PEERS maximum-routes 0\n   neighbor IPv4-UNDERLAY-PEERS peer group\n
+    \  neighbor IPv4-UNDERLAY-PEERS allowas-in 1\n   neighbor IPv4-UNDERLAY-PEERS
+    password 7 7x4B4rnJhZB438m9+BrBfQ==\n   neighbor IPv4-UNDERLAY-PEERS send-community\n
+    \  neighbor IPv4-UNDERLAY-PEERS maximum-routes 12000\n   neighbor 10.255.0.1 peer
+    group EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.1 remote-as 65100\n   neighbor
+    10.255.0.1 description LON-LAB-ARISTA-SPN01\n   neighbor 10.255.0.2 peer group
+    EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.2 remote-as 65100\n   neighbor 10.255.0.2
+    description LON-LAB-ARISTA-SPN02\n   neighbor 10.255.255.8 peer group IPv4-UNDERLAY-PEERS\n
+    \  neighbor 10.255.255.8 remote-as 65100\n   neighbor 10.255.255.8 description
+    LON-LAB-ARISTA-SPN01_Ethernet9/1\n   neighbor 10.255.255.10 peer group IPv4-UNDERLAY-PEERS\n
+    \  neighbor 10.255.255.10 remote-as 65100\n   neighbor 10.255.255.10 description
+    LON-LAB-ARISTA-SPN02_Ethernet9/1\n   redistribute connected route-map RM-CONN-2-BGP\n
+    \  !\n   vlan 123\n      rd 10.255.0.5:10123\n      route-target both 10123:10123\n
+    \     redistribute learned\n   !\n   address-family evpn\n      neighbor EVPN-OVERLAY-PEERS
+    activate\n   !\n   address-family ipv4\n      no neighbor EVPN-OVERLAY-PEERS activate\n
+    \     neighbor IPv4-UNDERLAY-PEERS activate\n   !\n   vrf prod\n      rd 10.255.0.5:10\n
+    \     route-target import evpn 10:10\n      route-target export evpn 10:10\n      router-id
+    10.255.0.5\n      redistribute connected\n!\nmanagement api http-commands\n   protocol
+    https\n   no shutdown\n   !\n   vrf MGMT\n      no shutdown\n!\nend\n"
+  AVD-FABRIC-_LON-LAB-ARISTA-LF01: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n
+    \  exec /usr/bin/TerminAttr -cvaddr=192.168.0.1:9910 -cvauth=token,/tmp/token
+    -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata
+    -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs\n   no shutdown\n!\nvlan
+    internal order ascending range 1006 1199\n!\ntransceiver qsfp default-mode 4x10G\n!\nservice
+    routing protocols model multi-agent\n!\nhostname LON-LAB-ARISTA-LF01\nip name-server
+    vrf MGMT 192.168.104.51\n!\nntp server vrf MGMT 0.pool.ntp.org prefer\n!\nspanning-tree
+    mode mstp\nspanning-tree mst 0 priority 4096\n!\nno enable password\nno aaa root\n!\nusername
+    ansible privilege 15 role network-admin secret sha512 $6$Sd/trh9um4T4h12V$5/nfigRGrajt0OvpsFRdPOMjRwMzugl8h/2QQ1H1lg706mVn4l0R1isfNv6KOmRr8C2OWHZD6sye8tIVoH7351\nusername
+    cvpadmin privilege 15 role network-admin secret sha512 $6$LITZBnm3CzatQIQ6$7Xn1QW54GMoonsSba6w9MtaKP3KVgR3qE3HtArQk89P.ZuIV7fgkqxWHHGVjcluudqWpIroH1b17EQRPchVaS1\n!\nvlan
+    123\n   name Prod-VLAN-123\n!\nvrf instance MGMT\n!\nvrf instance prod\n!\ninterface
+    Ethernet49/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-SPN01_Ethernet1/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.1/31\n!\ninterface
+    Ethernet50/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-SPN02_Ethernet1/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.3/31\n!\ninterface
+    Loopback0\n   description EVPN_Overlay_Peering\n   no shutdown\n   ip address
+    10.255.0.3/32\n!\ninterface Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n
+    \  no shutdown\n   ip address 10.255.1.3/32\n!\ninterface Loopback10\n   description
+    prod_VTEP_DIAGNOSTICS\n   no shutdown\n   vrf prod\n   ip address 10.255.10.3/32\n!\ninterface
+    Management1\n   description oob_management\n   no shutdown\n   vrf MGMT\n   ip
+    address 192.168.104.110/24\n!\ninterface Vlan123\n   description Prod-VLAN-123\n
+    \  no shutdown\n   vrf prod\n   ip address virtual 192.168.3.250/23\n!\ninterface
+    Vxlan1\n   description LON-LAB-ARISTA-LF01_VTEP\n   vxlan source-interface Loopback1\n
+    \  vxlan udp-port 4789\n   vxlan vlan 123 vni 10123\n   vxlan vrf prod vni 10\n!\nip
+    virtual-router mac-address 00:1c:73:00:00:99\n!\nip address virtual source-nat
+    vrf prod address 10.255.10.3\n!\nip routing\nno ip routing vrf MGMT\nip routing
+    vrf prod\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit 10.255.0.0/27
+    eq 32\n   seq 20 permit 10.255.1.0/27 eq 32\n!\nip route vrf MGMT 0.0.0.0/0 192.168.104.254\n!\nroute-map
+    RM-CONN-2-BGP permit 10\n   match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nrouter
+    bfd\n   multihop interval 300 min-rx 300 multiplier 3\n!\nrouter bgp 65101\n   router-id
+    10.255.0.3\n   maximum-paths 4 ecmp 4\n   no bgp default ipv4-unicast\n   neighbor
+    EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
+    \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS allowas-in
+    1\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop 3\n   neighbor EVPN-OVERLAY-PEERS
+    password 7 Q4fqtbqcZ7oQuKfuWtNGRQ==\n   neighbor EVPN-OVERLAY-PEERS send-community\n
+    \  neighbor EVPN-OVERLAY-PEERS maximum-routes 0\n   neighbor IPv4-UNDERLAY-PEERS
+    peer group\n   neighbor IPv4-UNDERLAY-PEERS allowas-in 1\n   neighbor IPv4-UNDERLAY-PEERS
+    password 7 7x4B4rnJhZB438m9+BrBfQ==\n   neighbor IPv4-UNDERLAY-PEERS send-community\n
+    \  neighbor IPv4-UNDERLAY-PEERS maximum-routes 12000\n   neighbor 10.255.0.1 peer
+    group EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.1 remote-as 65100\n   neighbor
+    10.255.0.1 description LON-LAB-ARISTA-SPN01\n   neighbor 10.255.0.2 peer group
+    EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.2 remote-as 65100\n   neighbor 10.255.0.2
+    description LON-LAB-ARISTA-SPN02\n   neighbor 10.255.255.0 peer group IPv4-UNDERLAY-PEERS\n
+    \  neighbor 10.255.255.0 remote-as 65100\n   neighbor 10.255.255.0 description
+    LON-LAB-ARISTA-SPN01_Ethernet1/1\n   neighbor 10.255.255.2 peer group IPv4-UNDERLAY-PEERS\n
+    \  neighbor 10.255.255.2 remote-as 65100\n   neighbor 10.255.255.2 description
+    LON-LAB-ARISTA-SPN02_Ethernet1/1\n   redistribute connected route-map RM-CONN-2-BGP\n
+    \  !\n   vlan 123\n      rd 10.255.0.3:10123\n      route-target both 10123:10123\n
+    \     redistribute learned\n   !\n   address-family evpn\n      neighbor EVPN-OVERLAY-PEERS
+    activate\n   !\n   address-family ipv4\n      no neighbor EVPN-OVERLAY-PEERS activate\n
+    \     neighbor IPv4-UNDERLAY-PEERS activate\n   !\n   vrf prod\n      rd 10.255.0.3:10\n
+    \     route-target import evpn 10:10\n      route-target export evpn 10:10\n      router-id
+    10.255.0.3\n      redistribute connected\n!\nmanagement api http-commands\n   protocol
+    https\n   no shutdown\n   !\n   vrf MGMT\n      no shutdown\n!\nend\n"
+  AVD-FABRIC-_LON-LAB-ARISTA-LF02: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n
+    \  exec /usr/bin/TerminAttr -cvaddr=192.168.0.1:9910 -cvauth=token,/tmp/token
+    -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata
+    -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs\n   no shutdown\n!\nvlan
+    internal order ascending range 1006 1199\n!\ntransceiver qsfp default-mode 4x10G\n!\nservice
+    routing protocols model multi-agent\n!\nhostname LON-LAB-ARISTA-LF02\nip name-server
+    vrf MGMT 192.168.104.51\n!\nntp server vrf MGMT 0.pool.ntp.org prefer\n!\nspanning-tree
+    mode mstp\nspanning-tree mst 0 priority 4096\n!\nno enable password\nno aaa root\n!\nusername
+    ansible privilege 15 role network-admin secret sha512 $6$Sd/trh9um4T4h12V$5/nfigRGrajt0OvpsFRdPOMjRwMzugl8h/2QQ1H1lg706mVn4l0R1isfNv6KOmRr8C2OWHZD6sye8tIVoH7351\nusername
+    cvpadmin privilege 15 role network-admin secret sha512 $6$LITZBnm3CzatQIQ6$7Xn1QW54GMoonsSba6w9MtaKP3KVgR3qE3HtArQk89P.ZuIV7fgkqxWHHGVjcluudqWpIroH1b17EQRPchVaS1\n!\nvlan
+    123\n   name Prod-VLAN-123\n!\nvrf instance MGMT\n!\nvrf instance prod\n!\ninterface
+    Ethernet49/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-SPN01_Ethernet2/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.5/31\n!\ninterface
+    Ethernet50/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-SPN02_Ethernet2/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.7/31\n!\ninterface
+    Loopback0\n   description EVPN_Overlay_Peering\n   no shutdown\n   ip address
+    10.255.0.4/32\n!\ninterface Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n
+    \  no shutdown\n   ip address 10.255.1.4/32\n!\ninterface Loopback10\n   description
+    prod_VTEP_DIAGNOSTICS\n   no shutdown\n   vrf prod\n   ip address 10.255.10.4/32\n!\ninterface
+    Management1\n   description oob_management\n   no shutdown\n   vrf MGMT\n   ip
+    address 192.168.104.155/24\n!\ninterface Vlan123\n   description Prod-VLAN-123\n
+    \  no shutdown\n   vrf prod\n   ip address virtual 192.168.3.250/23\n!\ninterface
+    Vxlan1\n   description LON-LAB-ARISTA-LF02_VTEP\n   vxlan source-interface Loopback1\n
+    \  vxlan udp-port 4789\n   vxlan vlan 123 vni 10123\n   vxlan vrf prod vni 10\n!\nip
+    virtual-router mac-address 00:1c:73:00:00:99\n!\nip address virtual source-nat
+    vrf prod address 10.255.10.4\n!\nip routing\nno ip routing vrf MGMT\nip routing
+    vrf prod\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit 10.255.0.0/27
+    eq 32\n   seq 20 permit 10.255.1.0/27 eq 32\n!\nip route vrf MGMT 0.0.0.0/0 192.168.104.254\n!\nroute-map
+    RM-CONN-2-BGP permit 10\n   match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nrouter
+    bfd\n   multihop interval 300 min-rx 300 multiplier 3\n!\nrouter bgp 65101\n   router-id
+    10.255.0.4\n   maximum-paths 4 ecmp 4\n   no bgp default ipv4-unicast\n   neighbor
+    EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
+    \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS allowas-in
+    1\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop 3\n   neighbor EVPN-OVERLAY-PEERS
+    password 7 Q4fqtbqcZ7oQuKfuWtNGRQ==\n   neighbor EVPN-OVERLAY-PEERS send-community\n
+    \  neighbor EVPN-OVERLAY-PEERS maximum-routes 0\n   neighbor IPv4-UNDERLAY-PEERS
+    peer group\n   neighbor IPv4-UNDERLAY-PEERS allowas-in 1\n   neighbor IPv4-UNDERLAY-PEERS
+    password 7 7x4B4rnJhZB438m9+BrBfQ==\n   neighbor IPv4-UNDERLAY-PEERS send-community\n
+    \  neighbor IPv4-UNDERLAY-PEERS maximum-routes 12000\n   neighbor 10.255.0.1 peer
+    group EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.1 remote-as 65100\n   neighbor
+    10.255.0.1 description LON-LAB-ARISTA-SPN01\n   neighbor 10.255.0.2 peer group
+    EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.2 remote-as 65100\n   neighbor 10.255.0.2
+    description LON-LAB-ARISTA-SPN02\n   neighbor 10.255.255.4 peer group IPv4-UNDERLAY-PEERS\n
+    \  neighbor 10.255.255.4 remote-as 65100\n   neighbor 10.255.255.4 description
+    LON-LAB-ARISTA-SPN01_Ethernet2/1\n   neighbor 10.255.255.6 peer group IPv4-UNDERLAY-PEERS\n
+    \  neighbor 10.255.255.6 remote-as 65100\n   neighbor 10.255.255.6 description
+    LON-LAB-ARISTA-SPN02_Ethernet2/1\n   redistribute connected route-map RM-CONN-2-BGP\n
+    \  !\n   vlan 123\n      rd 10.255.0.4:10123\n      route-target both 10123:10123\n
+    \     redistribute learned\n   !\n   address-family evpn\n      neighbor EVPN-OVERLAY-PEERS
+    activate\n   !\n   address-family ipv4\n      no neighbor EVPN-OVERLAY-PEERS activate\n
+    \     neighbor IPv4-UNDERLAY-PEERS activate\n   !\n   vrf prod\n      rd 10.255.0.4:10\n
+    \     route-target import evpn 10:10\n      route-target export evpn 10:10\n      router-id
+    10.255.0.4\n      redistribute connected\n!\nmanagement api http-commands\n   protocol
+    https\n   no shutdown\n   !\n   vrf MGMT\n      no shutdown\n!\nend\n"
+  AVD-FABRIC-_LON-LAB-ARISTA-SPN01: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n
+    \  exec /usr/bin/TerminAttr -cvaddr=192.168.0.1:9910 -cvauth=token,/tmp/token
+    -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata
+    -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs\n   no shutdown\n!\nvlan
+    internal order ascending range 1006 1199\n!\ntransceiver qsfp default-mode 4x10G\n!\nservice
+    routing protocols model multi-agent\n!\nhostname LON-LAB-ARISTA-SPN01\nip name-server
+    vrf MGMT 192.168.104.51\n!\nntp server vrf MGMT 0.pool.ntp.org prefer\n!\nspanning-tree
+    mode none\n!\nno enable password\nno aaa root\n!\nusername ansible privilege 15
+    role network-admin secret sha512 $6$Sd/trh9um4T4h12V$5/nfigRGrajt0OvpsFRdPOMjRwMzugl8h/2QQ1H1lg706mVn4l0R1isfNv6KOmRr8C2OWHZD6sye8tIVoH7351\nusername
+    cvpadmin privilege 15 role network-admin secret sha512 $6$LITZBnm3CzatQIQ6$7Xn1QW54GMoonsSba6w9MtaKP3KVgR3qE3HtArQk89P.ZuIV7fgkqxWHHGVjcluudqWpIroH1b17EQRPchVaS1\n!\nvrf
+    instance MGMT\n!\ninterface Ethernet1/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-LF01_Ethernet49/1\n
+    \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.0/31\n!\ninterface
+    Ethernet2/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-LF02_Ethernet49/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.4/31\n!\ninterface
+    Ethernet9/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-BL01_Ethernet49/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.8/31\n!\ninterface
+    Loopback0\n   description EVPN_Overlay_Peering\n   no shutdown\n   ip address
+    10.255.0.1/32\n!\ninterface Management1\n   description oob_management\n   no
+    shutdown\n   vrf MGMT\n   ip address 192.168.104.164/24\n!\nip routing\nno ip
+    routing vrf MGMT\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit
+    10.255.0.0/27 eq 32\n!\nip route vrf MGMT 0.0.0.0/0 192.168.104.254\n!\nroute-map
+    RM-CONN-2-BGP permit 10\n   match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nrouter
+    bfd\n   multihop interval 300 min-rx 300 multiplier 3\n!\nrouter bgp 65100\n   router-id
+    10.255.0.1\n   maximum-paths 4 ecmp 4\n   no bgp default ipv4-unicast\n   neighbor
+    EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS next-hop-unchanged\n
+    \  neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n   neighbor EVPN-OVERLAY-PEERS
+    bfd\n   neighbor EVPN-OVERLAY-PEERS allowas-in 1\n   neighbor EVPN-OVERLAY-PEERS
+    ebgp-multihop 3\n   neighbor EVPN-OVERLAY-PEERS password 7 Q4fqtbqcZ7oQuKfuWtNGRQ==\n
+    \  neighbor EVPN-OVERLAY-PEERS send-community\n   neighbor EVPN-OVERLAY-PEERS
+    maximum-routes 0\n   neighbor IPv4-UNDERLAY-PEERS peer group\n   neighbor IPv4-UNDERLAY-PEERS
+    allowas-in 1\n   neighbor IPv4-UNDERLAY-PEERS password 7 7x4B4rnJhZB438m9+BrBfQ==\n
+    \  neighbor IPv4-UNDERLAY-PEERS send-community\n   neighbor IPv4-UNDERLAY-PEERS
+    maximum-routes 12000\n   neighbor 10.255.0.3 peer group EVPN-OVERLAY-PEERS\n   neighbor
+    10.255.0.3 remote-as 65101\n   neighbor 10.255.0.3 description LON-LAB-ARISTA-LF01\n
+    \  neighbor 10.255.0.4 peer group EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.4 remote-as
+    65101\n   neighbor 10.255.0.4 description LON-LAB-ARISTA-LF02\n   neighbor 10.255.0.5
+    peer group EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.5 remote-as 65101\n   neighbor
+    10.255.0.5 description LON-LAB-ARISTA-BL01\n   neighbor 10.255.255.1 peer group
+    IPv4-UNDERLAY-PEERS\n   neighbor 10.255.255.1 remote-as 65101\n   neighbor 10.255.255.1
+    description LON-LAB-ARISTA-LF01_Ethernet49/1\n   neighbor 10.255.255.5 peer group
+    IPv4-UNDERLAY-PEERS\n   neighbor 10.255.255.5 remote-as 65101\n   neighbor 10.255.255.5
+    description LON-LAB-ARISTA-LF02_Ethernet49/1\n   neighbor 10.255.255.9 peer group
+    IPv4-UNDERLAY-PEERS\n   neighbor 10.255.255.9 remote-as 65101\n   neighbor 10.255.255.9
+    description LON-LAB-ARISTA-BL01_Ethernet49/1\n   redistribute connected route-map
+    RM-CONN-2-BGP\n   !\n   address-family evpn\n      neighbor EVPN-OVERLAY-PEERS
+    activate\n   !\n   address-family ipv4\n      no neighbor EVPN-OVERLAY-PEERS activate\n
+    \     neighbor IPv4-UNDERLAY-PEERS activate\n!\nmanagement api http-commands\n
+    \  protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no shutdown\n!\nend\n"
+  AVD-FABRIC-_LON-LAB-ARISTA-SPN02: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n
+    \  exec /usr/bin/TerminAttr -cvaddr=192.168.0.1:9910 -cvauth=token,/tmp/token
+    -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata
+    -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs\n   no shutdown\n!\nvlan
+    internal order ascending range 1006 1199\n!\ntransceiver qsfp default-mode 4x10G\n!\nservice
+    routing protocols model multi-agent\n!\nhostname LON-LAB-ARISTA-SPN02\nip name-server
+    vrf MGMT 192.168.104.51\n!\nntp server vrf MGMT 0.pool.ntp.org prefer\n!\nspanning-tree
+    mode none\n!\nno enable password\nno aaa root\n!\nusername ansible privilege 15
+    role network-admin secret sha512 $6$Sd/trh9um4T4h12V$5/nfigRGrajt0OvpsFRdPOMjRwMzugl8h/2QQ1H1lg706mVn4l0R1isfNv6KOmRr8C2OWHZD6sye8tIVoH7351\nusername
+    cvpadmin privilege 15 role network-admin secret sha512 $6$LITZBnm3CzatQIQ6$7Xn1QW54GMoonsSba6w9MtaKP3KVgR3qE3HtArQk89P.ZuIV7fgkqxWHHGVjcluudqWpIroH1b17EQRPchVaS1\n!\nvrf
+    instance MGMT\n!\ninterface Ethernet1/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-LF01_Ethernet50/1\n
+    \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.2/31\n!\ninterface
+    Ethernet2/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-LF02_Ethernet50/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.6/31\n!\ninterface
+    Ethernet9/1\n   description P2P_LINK_TO_LON-LAB-ARISTA-BL01_Ethernet50/1\n   no
+    shutdown\n   mtu 1500\n   no switchport\n   ip address 10.255.255.10/31\n!\ninterface
+    Loopback0\n   description EVPN_Overlay_Peering\n   no shutdown\n   ip address
+    10.255.0.2/32\n!\ninterface Management1\n   description oob_management\n   no
+    shutdown\n   vrf MGMT\n   ip address 192.168.104.166/24\n!\nip routing\nno ip
+    routing vrf MGMT\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit
+    10.255.0.0/27 eq 32\n!\nip route vrf MGMT 0.0.0.0/0 192.168.104.254\n!\nroute-map
+    RM-CONN-2-BGP permit 10\n   match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nrouter
+    bfd\n   multihop interval 300 min-rx 300 multiplier 3\n!\nrouter bgp 65100\n   router-id
+    10.255.0.2\n   maximum-paths 4 ecmp 4\n   no bgp default ipv4-unicast\n   neighbor
+    EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS next-hop-unchanged\n
+    \  neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n   neighbor EVPN-OVERLAY-PEERS
+    bfd\n   neighbor EVPN-OVERLAY-PEERS allowas-in 1\n   neighbor EVPN-OVERLAY-PEERS
+    ebgp-multihop 3\n   neighbor EVPN-OVERLAY-PEERS password 7 Q4fqtbqcZ7oQuKfuWtNGRQ==\n
+    \  neighbor EVPN-OVERLAY-PEERS send-community\n   neighbor EVPN-OVERLAY-PEERS
+    maximum-routes 0\n   neighbor IPv4-UNDERLAY-PEERS peer group\n   neighbor IPv4-UNDERLAY-PEERS
+    allowas-in 1\n   neighbor IPv4-UNDERLAY-PEERS password 7 7x4B4rnJhZB438m9+BrBfQ==\n
+    \  neighbor IPv4-UNDERLAY-PEERS send-community\n   neighbor IPv4-UNDERLAY-PEERS
+    maximum-routes 12000\n   neighbor 10.255.0.3 peer group EVPN-OVERLAY-PEERS\n   neighbor
+    10.255.0.3 remote-as 65101\n   neighbor 10.255.0.3 description LON-LAB-ARISTA-LF01\n
+    \  neighbor 10.255.0.4 peer group EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.4 remote-as
+    65101\n   neighbor 10.255.0.4 description LON-LAB-ARISTA-LF02\n   neighbor 10.255.0.5
+    peer group EVPN-OVERLAY-PEERS\n   neighbor 10.255.0.5 remote-as 65101\n   neighbor
+    10.255.0.5 description LON-LAB-ARISTA-BL01\n   neighbor 10.255.255.3 peer group
+    IPv4-UNDERLAY-PEERS\n   neighbor 10.255.255.3 remote-as 65101\n   neighbor 10.255.255.3
+    description LON-LAB-ARISTA-LF01_Ethernet50/1\n   neighbor 10.255.255.7 peer group
+    IPv4-UNDERLAY-PEERS\n   neighbor 10.255.255.7 remote-as 65101\n   neighbor 10.255.255.7
+    description LON-LAB-ARISTA-LF02_Ethernet50/1\n   neighbor 10.255.255.11 peer group
+    IPv4-UNDERLAY-PEERS\n   neighbor 10.255.255.11 remote-as 65101\n   neighbor 10.255.255.11
+    description LON-LAB-ARISTA-BL01_Ethernet50/1\n   redistribute connected route-map
+    RM-CONN-2-BGP\n   !\n   address-family evpn\n      neighbor EVPN-OVERLAY-PEERS
+    activate\n   !\n   address-family ipv4\n      no neighbor EVPN-OVERLAY-PEERS activate\n
+    \     neighbor IPv4-UNDERLAY-PEERS activate\n!\nmanagement api http-commands\n
+    \  protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no shutdown\n!\nend\n"
+cvp_topology:
+  DC1:
+    devices: []
+    parent_container: FABRIC
+  DC1_L3_LEAVES:
+    devices:
+    - LON-LAB-ARISTA-LF01
+    - LON-LAB-ARISTA-LF02
+    - LON-LAB-ARISTA-BL01
+    parent_container: DC1
+  DC1_SPINES:
+    devices:
+    - LON-LAB-ARISTA-SPN01
+    - LON-LAB-ARISTA-SPN02
+    parent_container: DC1
+  FABRIC:
+    devices: []
+    parent_container: Tenant
