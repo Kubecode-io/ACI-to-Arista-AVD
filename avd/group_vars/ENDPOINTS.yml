@@ -1,0 +1,11 @@
+---
+# Definition of connected endpoints in the fabric.
+servers:
+  - name: host2
+    adapters:
+      - endpoint_ports: [eth0]
+        switch_ports: [Ethernet48]
+        switches: [LON-LAB-ARISTA-BL01]
+        mode: access
+        vlans: 11
+
